@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegistrationRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
@@ -22,9 +24,9 @@ class AuthController extends Controller
     /**
      * Get a JWT via given credentials.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResource
      */
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request): JsonResource
     {
         if (!$token = auth()->attempt($request->validated())) {
             return response()->json([
@@ -37,9 +39,9 @@ class AuthController extends Controller
     /**
      * Register a User.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResource
      */
-    public function register(RegistrationRequest $request)
+    public function register(RegistrationRequest $request): JsonResource
     {
         try {
             DB::beginTransaction();
@@ -71,39 +73,38 @@ class AuthController extends Controller
     /**
      * Refresh a token.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResource
      */
-    public function refresh()
+    public function refresh(): JsonResource
     {
         return $this->createNewToken(auth()->refresh());
     }
     /**
      * Get the authenticated User.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResource
      */
-    public function userProfile()
+    public function userProfile(): JsonResource
     {
-        return response()->json([
-            'success' => true,
-            'user' => auth()->user()
-        ]);
+        return (new UserResource(auth()->user()->load(['tweets', 'followers', 'following'])))->additional([
+            'message'  => 'Profile retrieved successfully.',
+            'success'  => true,
+         ]);
     }
     /**
      * Get the token array structure.
      *
      * @param  string $token
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResource
      */
-    protected function createNewToken($token, $status = 200)
+    protected function createNewToken($token, $status = 200): JsonResource
     {
-        return response()->json([
-            'success' => true,
+        return (new UserResource(auth()->user()))->additional([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
-            'user' => auth()->user()
-        ], $status);
+            'success'  => true,
+         ]);
     }
 }

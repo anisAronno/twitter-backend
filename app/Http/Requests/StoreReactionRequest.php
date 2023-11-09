@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\React;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class StoreReactionRequest extends FormRequest
 {
@@ -11,7 +13,7 @@ class StoreReactionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return auth()->check();
     }
 
     /**
@@ -22,7 +24,7 @@ class StoreReactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'react' => ['required', new Enum(React::class)],
         ];
     }
 }
