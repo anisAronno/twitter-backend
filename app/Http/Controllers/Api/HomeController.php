@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Enums\React;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TweetResource;
 use App\Models\Tweet;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
@@ -21,48 +22,152 @@ class HomeController extends Controller
     }
 
     /**
- * Get tweets from users that the authenticated user is following.
- */
-    public function homeTweets(): JsonResource
+     * Following Tweet
+     *
+     * @return JsonResource
+     */
+    public function followingTweets(Request $request): JsonResource
     {
+        $page = $request->input('page', 1);
+        $searchUsername = $request->input('username');
         $user = auth()->user();
 
-        $tweets = Tweet::whereIn('user_id', $user->following()->pluck('users.id'))
-            ->with(['user', 'reactions.user'])
-            ->orderByDesc('id')
-            ->get();
+        $key = md5('following_tweets_'.$user->email.'_'.$page .'_'. ($searchUsername ? '_' . $searchUsername : ''));
+        $tagKey = 'followingTweets';
 
+        $tweets = Cache::tags([$tagKey])->remember($key, now()->addDay(), function () use ($user, $searchUsername) {
+            $tweets = Tweet::whereIn('user_id', $user->following()->pluck('users.id')->toArray())
+                ->with([
+                    'user' => function ($query) use ($user) {
+                        $query->without('followers')->with(['followers' => function ($followerQuery) use ($user) {
+                            $followerQuery->where('follower_id', $user->id);
+                        }]);
+                    },
+                    'reactions' => function ($subQuery) {
+                        $subQuery->select('tweet_id', 'user_id', 'react')
+                        ->selectRaw('COUNT(*) as reaction_count')
+                        ->with('user')
+                        ->groupBy('tweet_id', 'user_id', 'react');
+                    }
+                ])
+                ->when($searchUsername, function ($query) use ($searchUsername) {
+                    $query->whereHas('user', function ($userQuery) use ($searchUsername) {
+                        $userQuery->where('username', $searchUsername);
+                    });
+                })
+                ->when(!$searchUsername, function ($query) use ($user) {
+                    $query->where('user_id', '!=', $user->id);
+                })
+                ->orderByDesc('id')
+                ->paginate(10)
+                ->withQueryString();
+
+            $tweets->getCollection()->transform(function ($tweet) use ($user) {
+                $tweet->user->isFollowing = in_array($tweet->user_id, $user->following()->pluck('users.id')->toArray());
+                unset($tweet->user->followers);
+                $totalReactions = $tweet->reactions->sum('reaction_count');
+                $tweet->total_reactions = $totalReactions;
+
+                $aggregatedReactions = $tweet->reactions
+                ->groupBy('react')
+                ->map(function ($reactions) {
+                    return $reactions->sum('reaction_count');
+                });
+                $tweet->reaction_count = $aggregatedReactions;
+
+                $userReactions = $tweet->reactions
+                ->where('user_id', $user->id)
+                ->pluck('react')
+                ->unique()
+                ->values();
+                $tweet->user_reactions = $userReactions;
+
+                unset($tweet->reactions);
+
+                return $tweet;
+            });
+
+            return $tweets;
+        });
         return TweetResource::collection($tweets)
             ->additional([
                 'message' => 'Home tweets retrieved successfully.',
                 'success' => true,
-            ]);
+        ]);
     }
 
     /**
-     * Show tweets from users that the authenticated user is following.
+     * Home Page Tweet
      *
      * @return JsonResource
      */
-    public function randomTweets($randomBy = 'id'): JsonResource
+    public function tweets(Request $request): JsonResource
     {
+        $page = $request->input('page', 1);
+        $searchUsername = $request->input('username');
         $user = auth()->user();
 
-        $tweets = Tweet::select('tweets.*')
-            ->leftJoin('reactions', 'tweets.id', '=', 'reactions.tweet_id')
-            ->whereIn('tweets.user_id', $user->following()->pluck('users.id'))
-            ->withCount('reactions')
-            ->groupBy('tweets.id')
-            ->orderByRaw('
-            CASE WHEN ? = "id" THEN RAND() ELSE tweets.created_at END,
-            reactions_count DESC,
-            MAX(CASE WHEN reactions.react = ? THEN 1 ELSE 0 END) DESC
-        ', [$randomBy, React::LOVE])
-            ->get();
+        $key = md5('tweets_'.$user->email.'_'.$page .'_'. ($searchUsername ? '_' . $searchUsername : ''));
+        $tagKey = 'tweet';
 
-        return TweetResource::collection($tweets->load(['user', 'reactions.user']))
+        $tweets = Cache::tags([$tagKey])->remember($key, now()->addDay(), function () use ($user, $searchUsername) {
+            $tweets = Tweet::with([
+                'user' => function ($query) use ($user) {
+                    $query->without('followers')->with(['followers' => function ($followerQuery) use ($user) {
+                        $followerQuery->where('follower_id', $user->id);
+                    }]);
+                },
+                'reactions' => function ($subQuery) {
+                    $subQuery->select('tweet_id', 'user_id', 'react')
+                    ->selectRaw('COUNT(*) as reaction_count')
+                    ->with('user')
+                    ->groupBy('tweet_id', 'user_id', 'react');
+                }
+            ])
+            ->when($searchUsername, function ($query) use ($searchUsername) {
+                $query->whereHas('user', function ($userQuery) use ($searchUsername) {
+                    $userQuery->where('username', $searchUsername);
+                });
+            })
+            ->when(!$searchUsername, function ($query) use ($user) {
+                $query->where('user_id', '!=', $user->id);
+            })
+            ->orderByDesc('id')
+            ->paginate(10)
+            ->withQueryString();
+
+            $tweets->getCollection()->transform(function ($tweet) use ($user) {
+                $tweet->user->isFollowing = in_array($tweet->user_id, $user->following()->pluck('users.id')->toArray());
+                unset($tweet->user->followers);
+                $totalReactions = $tweet->reactions->sum('reaction_count');
+                $tweet->total_reactions = $totalReactions;
+
+                $aggregatedReactions = $tweet->reactions
+                ->groupBy('react')
+                ->map(function ($reactions) {
+                    return $reactions->sum('reaction_count');
+                });
+                $tweet->reaction_count = $aggregatedReactions;
+
+                $userReactions = $tweet->reactions
+                ->where('user_id', $user->id)
+                ->pluck('react')
+                ->unique()
+                ->values();
+                $tweet->user_reactions = $userReactions;
+
+                unset($tweet->reactions);
+
+                return $tweet;
+            });
+
+            return $tweets;
+
+        });
+
+        return TweetResource::collection($tweets)
             ->additional([
-                'message' => 'Following tweets retrieved successfully.',
+                'message' => 'Home tweets retrieved successfully.',
                 'success' => true,
         ]);
     }
@@ -73,20 +178,71 @@ class HomeController extends Controller
      * @param  string  $username
      * @return JsonResource
     */
-    public function tweetsByUsername($username): JsonResource
+    public function tweetsByUsername(Request $request, $username): JsonResource
     {
-        $tweets = Tweet::whereHas('user', function ($query) use ($username) {
-            $query->where('username', $username);
-        })
-        ->with(['user', 'reactions.user'])
-        ->orderByDesc('id')
-        ->get();
+        $page = $request->input('page', 1);
+
+        $key = 'tweetsByUserName_' . $page . ($username ? '_' . $username : '');
+
+        $tagKey = 'tweetByUserName';
+
+        $tweets = Cache::tags([$tagKey])->remember($key, now()->addDay(), function () use ($username) {
+            return Tweet::whereHas('user', function ($query) use ($username) {
+                $query->where('username', $username);
+            })
+                ->with([
+                'user' => function ($query) {
+                    $user = auth()->user();
+
+                    $query->without('followers')->with(['followers' => function ($followerQuery) use ($user) {
+                        $followerQuery->where('follower_id', $user->id);
+                    }]);
+                },
+                'reactions' => function ($subQuery) {
+                    $subQuery->select('tweet_id', 'user_id', 'react')
+                        ->selectRaw('COUNT(*) as reaction_count')
+                        ->with('user')
+                        ->groupBy('tweet_id', 'user_id', 'react');
+                }
+            ])
+                ->orderByDesc('id')
+                ->paginate()
+                ->withQueryString();
+        });
+
+        $tweets->getCollection()->transform(function ($tweet) {
+            $user = auth()->user();
+
+            $tweet->user->isFollowing = in_array($tweet->user_id, $user->following()->pluck('users.id')->toArray());
+            unset($tweet->user->followers);
+
+            $totalReactions = $tweet->reactions->sum('reaction_count');
+            $tweet->total_reactions = $totalReactions;
+
+            $aggregatedReactions = $tweet->reactions->groupBy('react')
+                ->map(function ($reactions) {
+                    return $reactions->sum('reaction_count');
+                });
+            $tweet->reaction_count = $aggregatedReactions;
+
+            $userReactions = $tweet->reactions
+                ->where('user_id', $user->id)
+                ->pluck('react')
+                ->unique()
+                ->values();
+            $tweet->user_reactions = $userReactions;
+
+            unset($tweet->reactions);
+
+            return $tweet;
+        });
 
         return TweetResource::collection($tweets)
             ->additional([
                 'message' => 'Tweets retrieved successfully.',
                 'success' => true,
-        ]);
+            ]);
     }
+
 
 }

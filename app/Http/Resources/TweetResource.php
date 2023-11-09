@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Resources\ReactionResource;
+use App\Enums\React;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -20,10 +20,12 @@ class TweetResource extends JsonResource
         return [
             "id" => $this->id,
             "content" => $this->content,
-            "reactions_count" => $this->whenNotNull($this->reactions_count),
-            'user' => new UserResource($this->whenLoaded('user')),
-            'reactions' => ReactionResource::collection($this->whenLoaded('reactions')),
             'created_at' => Carbon::parse($this->created_at)->diffForHumans(),
+            "total_reactions" => $this->whenNotNull($this->total_reactions),
+            "user_reactions" => $this->whenNotNull($this->user_reactions),
+            "reaction_count" => $this->whenNotNull($this->reaction_count),
+            "reaction_arr" => React::values(),
+            'user' => new UserResource($this->whenLoaded('user')),
         ];
     }
 }

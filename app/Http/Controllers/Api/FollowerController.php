@@ -19,7 +19,10 @@ class FollowerController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Follow User
+     *
+     * @param StoreFollowerRequest $request
+     * @return void
      */
     public function follow(StoreFollowerRequest $request)
     {
@@ -43,10 +46,13 @@ class FollowerController extends Controller
 
 
 
-    /**
-     * Remove the specified resource from storage.
-     */
 
+    /**
+     * UnFollow User
+     *
+     * @param StoreFollowerRequest $request
+     * @return void
+     */
     public function unFollow(StoreFollowerRequest $request)
     {
         $user = auth()->user();

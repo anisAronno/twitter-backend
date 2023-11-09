@@ -23,20 +23,13 @@ class UserSeeder extends Seeder
         Follower::truncate();
         Schema::enableForeignKeyConstraints();
 
-        User::create([
-            "name" => "anis",
-            "email" => "anis904692@gmail.com",
-            "username" => "anisaronno",
-            "password" => "password",
-            "image" => "https://avatars.githubusercontent.com/u/38912435?v=4",
-        ]);
-
-        User::factory()->count(20)
+        User::factory()->count(3)
             ->has(
-                Tweet::factory()->count(3)
-                ->has(Reaction::factory()->count(2), 'reactions')
+                Tweet::factory()->count(100)
+                ->has(Reaction::factory()->count(20), 'reactions')
             )
-            ->has(Follower::factory()->count(3))
+            ->has(Follower::factory()->count(10), 'followers')
+            ->has(Follower::factory()->count(10), 'following')
             ->create();
     }
 }

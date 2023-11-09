@@ -22,7 +22,7 @@ class TweetFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'content' => $this->faker->text,
+            'content' => $this->faker->paragraph(),
         ];
     }
 }

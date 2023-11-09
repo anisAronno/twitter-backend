@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Jobs\QueuedPasswordResetJob;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,7 +13,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable implements JWTSubject, CanResetPasswordContract
 {
     use HasApiTokens;
     use HasFactory;
@@ -29,6 +31,8 @@ class User extends Authenticatable implements JWTSubject
         'username',
         'image',
     ];
+
+    protected $appends = ['isFollowing'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -49,6 +53,21 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+    public function getIsFollowingAttribute()
+    {
+        if(auth()->check()) {
+            $user = auth()->user();
+            $followingArr = $user->following()->pluck('following_id')->toArray();
+            return in_array($this->id, $followingArr);
+
+        }
+        return false;
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        QueuedPasswordResetJob::dispatch($this, $token);
+    }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.

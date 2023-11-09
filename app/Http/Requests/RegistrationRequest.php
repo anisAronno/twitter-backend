@@ -16,8 +16,8 @@ class RegistrationRequest extends FormRequest
         return [
             'name' => 'required|string|between:2,100',
             'email' => 'required|string|email:rfc,dns|max:100|unique:users,email',
-            'username' => 'required|string|max:100|unique:users,username|alpha_dash',
-            'password' => 'required|string|confirmed|min:6|alpha_dash',
+            'username' => 'required|string|min:3|max:100|unique:users,username|alpha_dash',
+            'password' => 'required|string|confirmed|min:6',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }

@@ -7,6 +7,7 @@ use App\Http\Requests\StoreTweetRequest;
 use App\Http\Requests\UpdateTweetRequest;
 use App\Http\Resources\TweetResource;
 use App\Models\Tweet;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
 
@@ -24,11 +25,15 @@ class TweetController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Display User Tweet
+     *
+     * @return JsonResource|JsonResponse
      */
-    public function index(): JsonResource
+    public function index(): JsonResource|JsonResponse
     {
-        $tweets = auth()->user()->tweets()->orderByDesc('id')->get();
+        $user = auth()->user()->load('tweets');
+
+        $tweets = $user->tweets()->orderByDesc('id')->paginate();
 
         return (TweetResource::collection($tweets->load(['reactions.user'])))->additional([
             'message'  => 'Tweet retrieved successfully.',
@@ -37,9 +42,12 @@ class TweetController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store Tweet
+     *
+     * @param StoreTweetRequest $request
+     * @return JsonResource|JsonResponse
      */
-    public function store(StoreTweetRequest $request)
+    public function store(StoreTweetRequest $request): JsonResource|JsonResponse
     {
         try {
             DB::beginTransaction();
@@ -64,9 +72,12 @@ class TweetController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display Single Tweets
+     *
+     * @param Tweet $tweet
+     * @return JsonResource
      */
-    public function show(Tweet $tweet)
+    public function show(Tweet $tweet): JsonResource
     {
         return (new TweetResource($tweet->load(['reactions.user'])))->additional([
             'message' => 'Tweet retrieved successfully.',
@@ -75,9 +86,13 @@ class TweetController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update Tweet
+     *
+     * @param UpdateTweetRequest $request
+     * @param Tweet $tweet
+     * @return JsonResource
      */
-    public function update(UpdateTweetRequest $request, Tweet $tweet)
+    public function update(UpdateTweetRequest $request, Tweet $tweet): JsonResource|JsonResponse
     {
         try {
             DB::beginTransaction();
@@ -101,9 +116,12 @@ class TweetController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete Tweet
+     *
+     * @param Tweet $tweet
+     * @return JsonResponse
      */
-    public function destroy(Tweet $tweet)
+    public function destroy(Tweet $tweet): JsonResponse
     {
         if ($tweet->delete()) {
             return response()->json([
