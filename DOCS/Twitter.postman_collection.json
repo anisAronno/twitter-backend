@@ -9,6 +9,9 @@
 		{
 			"name": "Register",
 			"request": {
+				"auth": {
+					"type": "noauth"
+				},
 				"method": "POST",
 				"header": [
 					{
@@ -19,7 +22,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\" : \"anis\",\n    \"email\": \"anis904692@gmail.com\",\n    \"username\" : \"anisaronno\",\n    \"password\": \"password\",\n    \"password_confirmation\" : \"password\"\n}",
+					"raw": "{\n    \"name\" : \"anis\",\n    \"email\": \"saad@gmail.com\",\n    \"username\" : \"saad\",\n    \"password\": \"password\",\n    \"password_confirmation\" : \"password\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -42,7 +45,7 @@
 			"response": []
 		},
 		{
-			"name": "Login",
+			"name": "Profile Update",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -54,7 +57,82 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"email\": \"mthompson@example.net\",\n    \"username\" : \"anisaronno\",\n    \"password\": \"password\"\n}",
+					"raw": "{\n    \"id\": 1,\n    \"name\" : \"Anichur Rahaman\",\n    \"email\": \"anis9046922@gmail.com\",\n    \"username\" : \"anisaronno2\",\n    \"password\": \"password\",\n    \"password_confirmation\" : \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://twitter.test/api/profile-update/1",
+					"protocol": "http",
+					"host": [
+						"twitter",
+						"test"
+					],
+					"path": [
+						"api",
+						"profile-update",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Password Update",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 1, \n    \"old_password\": \"password3\",\n    \"password\": \"password4\",\n    \"password_confirmation\" : \"password4\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://twitter.test/api/password-update/1",
+					"protocol": "http",
+					"host": [
+						"twitter",
+						"test"
+					],
+					"path": [
+						"api",
+						"password-update",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"anisaronno@gmail.com\",\n    \"password\": \"password\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -71,6 +149,44 @@
 					"path": [
 						"api",
 						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Recover Password",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"anisaronno@gmail.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://twitter.test/api/password-recover",
+					"protocol": "http",
+					"host": [
+						"twitter",
+						"test"
+					],
+					"path": [
+						"api",
+						"password-recover"
 					]
 				}
 			},
@@ -160,7 +276,7 @@
 			"response": []
 		},
 		{
-			"name": "Tweet Get",
+			"name": "User Profile",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
@@ -175,7 +291,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "",
+					"raw": "{\n    \"email\": \"anis904692@gmail.com\",\n    \"username\" : \"anis\",\n    \"password\": \"password\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -183,7 +299,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://twitter.test/api/tweet",
+					"raw": "http://twitter.test/api/user-profile/6124",
 					"protocol": "http",
 					"host": [
 						"twitter",
@@ -191,14 +307,15 @@
 					],
 					"path": [
 						"api",
-						"tweet"
+						"user-profile",
+						"6124"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Random Tweets",
+			"name": "Tweet Single",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
@@ -221,7 +338,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://twitter.test/api/random-tweets",
+					"raw": "http://twitter.test/api/tweet/1",
 					"protocol": "http",
 					"host": [
 						"twitter",
@@ -229,14 +346,15 @@
 					],
 					"path": [
 						"api",
-						"random-tweets"
+						"tweet",
+						"1"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Home",
+			"name": "Tweets All",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
@@ -259,7 +377,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://twitter.test/api/home",
+					"raw": "http://twitter.test/api/tweets?page=10",
 					"protocol": "http",
 					"host": [
 						"twitter",
@@ -267,7 +385,63 @@
 					],
 					"path": [
 						"api",
-						"home"
+						"tweets"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "elenora24",
+							"disabled": true
+						},
+						{
+							"key": "page",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tweets Following",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://twitter.test/api/following-tweets",
+					"protocol": "http",
+					"host": [
+						"twitter",
+						"test"
+					],
+					"path": [
+						"api",
+						"following-tweets"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "abshire.isaac",
+							"disabled": true
+						}
 					]
 				}
 			},
@@ -297,7 +471,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://twitter.test/api/tweets-by-username/xavier42",
+					"raw": "http://twitter.test/api/tweets/elenora24",
 					"protocol": "http",
 					"host": [
 						"twitter",
@@ -305,15 +479,15 @@
 					],
 					"path": [
 						"api",
-						"tweets-by-username",
-						"xavier42"
+						"tweets",
+						"elenora24"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Tweet Single",
+			"name": "Tweet Update",
 			"request": {
 				"method": "PUT",
 				"header": [
@@ -325,7 +499,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"content\" : \"Test Content edited\"\n}",
+					"raw": "{\n    \"content\" : \"Test Content edited 123\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -333,7 +507,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://twitter.test/api/tweet/2",
+					"raw": "http://twitter.test/api/tweet/212",
 					"protocol": "http",
 					"host": [
 						"twitter",
@@ -342,7 +516,7 @@
 					"path": [
 						"api",
 						"tweet",
-						"2"
+						"212"
 					]
 				}
 			},
@@ -467,7 +641,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"react\" : \"Like\"\n}",
+					"raw": "{\n    \"react\" : \"Care\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -567,7 +741,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vdHdpdHRlci50ZXN0L2FwaS9sb2dpbiIsImlhdCI6MTY5OTU3MjIyNiwiZXhwIjoxNjk5NTc1ODI2LCJuYmYiOjE2OTk1NzIyMjYsImp0aSI6Ik1HbXRLUGttNzhQUTlsdUIiLCJzdWIiOiIyIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.oyQ4KsgV-ErSVOudt5cAfq-bb8YuVCs_WdOvUYG1Ss0",
+				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vdHdpdHRlci50ZXN0L2FwaS9sb2dpbiIsImlhdCI6MTcwMDA1ODU4OSwiZXhwIjoxNzAwMDYyMTg5LCJuYmYiOjE3MDAwNTg1ODksImp0aSI6IldLbzZ2T1RkeUpDRU9yc1AiLCJzdWIiOiIxIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.UL3Qoc3Sccg3N8M_7_W3D2L95MThtkEMvL2OcBcVZVA",
 				"type": "string"
 			}
 		]

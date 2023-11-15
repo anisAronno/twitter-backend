@@ -51,13 +51,46 @@ class TweetController extends Controller
     {
         try {
             DB::beginTransaction();
+            $user = auth()->user();
 
-            $tweet = auth()->user()->tweets()->create([
+            $tweet = $user->tweets()->create([
                 'content' => $request->input('content'),
             ]);
 
+            $tweet->refresh();
+
+            $tweet->load([
+                'user' => function ($query) use ($user) {
+                    $query->without('followers')->with(['followers' => function ($followerQuery) use ($user) {
+                        $followerQuery->where('follower_id', $user->id);
+                    }]);
+                },
+                'reactions' => function ($subQuery) {
+                    $subQuery->select('tweet_id', 'react')
+                        ->selectRaw('COUNT(*) as reaction_count')
+                        ->groupBy('tweet_id', 'react');
+                }
+            ]);
+
+            $totalReactions = $tweet->reactions->sum('reaction_count');
+            $tweet->total_reactions = $totalReactions;
+
+            $aggregatedReactions = $tweet->reactions
+                ->groupBy('react')
+                ->map(function ($reactions) {
+                    return $reactions->sum('reaction_count');
+                });
+            $tweet->reaction_count = $aggregatedReactions;
+
+            $userReactions = $tweet->reactions
+                ->where('user_id', $user->id)
+                ->pluck('react')
+                ->unique()
+                ->values();
+            $tweet->user_reactions = $userReactions;
+
             DB::commit();
-            return (new TweetResource($tweet->load(['reactions.user'])))->additional([
+            return (new TweetResource($tweet))->additional([
                 'message' => 'Tweet created successfully.',
                 'success' => true,
             ]);
@@ -97,12 +130,46 @@ class TweetController extends Controller
         try {
             DB::beginTransaction();
 
-            auth()->user()->tweets()->update([
+            $user = auth()->user();
+
+            $tweet->update([
                 'content' => $request->input('content'),
             ]);
 
+            $tweet->refresh();
+
+            $tweet->load([
+                'user' => function ($query) use ($user) {
+                    $query->without('followers')->with(['followers' => function ($followerQuery) use ($user) {
+                        $followerQuery->where('follower_id', $user->id);
+                    }]);
+                },
+                'reactions' => function ($subQuery) {
+                    $subQuery->select('tweet_id', 'react')
+                        ->selectRaw('COUNT(*) as reaction_count')
+                        ->groupBy('tweet_id', 'react');
+                }
+            ]);
+
+            $totalReactions = $tweet->reactions->sum('reaction_count');
+            $tweet->total_reactions = $totalReactions;
+
+            $aggregatedReactions = $tweet->reactions
+                ->groupBy('react')
+                ->map(function ($reactions) {
+                    return $reactions->sum('reaction_count');
+                });
+            $tweet->reaction_count = $aggregatedReactions;
+
+            $userReactions = $tweet->reactions
+                ->where('user_id', $user->id)
+                ->pluck('react')
+                ->unique()
+                ->values();
+            $tweet->user_reactions = $userReactions;
+
             DB::commit();
-            return (new TweetResource($tweet->load(['reactions.user'])))->additional([
+            return (new TweetResource($tweet))->additional([
                 'message' => 'Tweet updated successfully.',
                 'success' => true,
             ]);
@@ -115,6 +182,7 @@ class TweetController extends Controller
         }
     }
 
+
     /**
      * Delete Tweet
      *
@@ -126,8 +194,8 @@ class TweetController extends Controller
         if ($tweet->delete()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Successfully deleted?!'
-            ], 400);
+                'message' => 'Successfully deleted.'
+            ], 200);
         } else {
             return response()->json([
                 'success' => false,
