@@ -1,18 +1,21 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+Route::get('/login', function () {
+    return view('login');
+})->name('login');
 
 Route::get('/', function () {
     return view('welcome');
+})->name('home');
+
+Route::get('/anis3139', function () {
+
+    Artisan::call('optimize:clear');
+    Artisan::call('storage:link');
+    Artisan::call('key:generate');
+
+    return redirect()->route('home');
 });

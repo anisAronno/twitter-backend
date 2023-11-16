@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\FollowerController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\ReactionController;
@@ -21,7 +21,7 @@ Route::controller(AuthController::class)->group(function () {
 });
 
 Route::controller(HomeController::class)->middleware(['auth:api'])->group(function () {
-    Route::get('tweets', 'tweets')->name('home');
+    Route::get('tweets', 'tweets')->name('tweets');
     Route::get('following-tweets', 'followingTweets')->name('followingTweets');
     Route::get('tweets/{user:username}', 'tweetsByUsername')->name('tweetsByUsername');
 });

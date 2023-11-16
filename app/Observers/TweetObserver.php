@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Tweet;
-use Cache;
+use AnisAronno\LaravelCacheMaster\CacheControl;
 
 class TweetObserver
 {
@@ -12,7 +12,7 @@ class TweetObserver
      */
     public function created(Tweet $tweet): void
     {
-        Cache::tags(['tweet','followingTweets',  'tweetByUserName'])->flush();
+        CacheControl::forgetCache(['tweet','followingTweets',  'tweetByUserName']);
     }
 
     /**
@@ -20,7 +20,7 @@ class TweetObserver
      */
     public function updated(Tweet $tweet): void
     {
-        Cache::tags(['tweet','followingTweets',  'tweetByUserName'])->flush();
+        CacheControl::forgetCache(['tweet','followingTweets',  'tweetByUserName']);
     }
 
     /**
@@ -28,7 +28,7 @@ class TweetObserver
      */
     public function deleted(Tweet $tweet): void
     {
-        Cache::tags(['tweet','followingTweets',  'tweetByUserName'])->flush();
+        CacheControl::forgetCache(['tweet','followingTweets',  'tweetByUserName']);
     }
 
     /**
@@ -36,7 +36,7 @@ class TweetObserver
      */
     public function restored(Tweet $tweet): void
     {
-        Cache::tags(['tweet','followingTweets',  'tweetByUserName'])->flush();
+        CacheControl::forgetCache(['tweet','followingTweets',  'tweetByUserName']);
     }
 
     /**
@@ -44,6 +44,6 @@ class TweetObserver
      */
     public function forceDeleted(Tweet $tweet): void
     {
-        Cache::tags(['tweet','followingTweets',  'tweetByUserName'])->flush();
+        CacheControl::forgetCache(['tweet','followingTweets',  'tweetByUserName']);
     }
 }

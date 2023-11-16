@@ -7,7 +7,7 @@ use App\Http\Resources\TweetResource;
 use App\Models\Tweet;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Cache;
+use AnisAronno\LaravelCacheMaster\CacheControl;
 
 class HomeController extends Controller
 {
@@ -35,7 +35,7 @@ class HomeController extends Controller
         $key = md5('following_tweets_'.$user->email.'_'.$page .'_'. ($searchUsername ? '_' . $searchUsername : ''));
         $tagKey = 'followingTweets';
 
-        $tweets = Cache::tags([$tagKey])->remember($key, now()->addDay(), function () use ($user, $searchUsername) {
+        $tweets = CacheControl::init([$tagKey])->remember($key, now()->addDay(), function () use ($user, $searchUsername) {
             $tweets = Tweet::whereIn('user_id', $user->following()->pluck('users.id')->toArray())
                 ->with([
                     'user' => function ($query) use ($user) {
@@ -110,7 +110,7 @@ class HomeController extends Controller
         $key = md5('tweets_'.$user->email.'_'.$page .'_'. ($searchUsername ? '_' . $searchUsername : ''));
         $tagKey = 'tweet';
 
-        $tweets = Cache::tags([$tagKey])->remember($key, now()->addDay(), function () use ($user, $searchUsername) {
+        $tweets = CacheControl::init([$tagKey])->remember($key, now()->addDay(), function () use ($user, $searchUsername) {
             $tweets = Tweet::with([
                 'user' => function ($query) use ($user) {
                     $query->without('followers')->with(['followers' => function ($followerQuery) use ($user) {
@@ -186,7 +186,7 @@ class HomeController extends Controller
 
         $tagKey = 'tweetByUserName';
 
-        $tweets = Cache::tags([$tagKey])->remember($key, now()->addDay(), function () use ($username) {
+        $tweets = CacheControl::init([$tagKey])->remember($key, now()->addDay(), function () use ($username) {
             return Tweet::whereHas('user', function ($query) use ($username) {
                 $query->where('username', $username);
             })

@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Reaction;
-use Illuminate\Support\Facades\Cache;
+use AnisAronno\LaravelCacheMaster\CacheControl;
 
 class ReactionObserver
 {
@@ -12,7 +12,7 @@ class ReactionObserver
      */
     public function created(Reaction $reaction): void
     {
-        Cache::tags(['tweet','followingTweets',  'tweetByUserName'])->flush();
+        CacheControl::forgetCache(['tweet','followingTweets',  'tweetByUserName']);
     }
 
     /**
@@ -20,7 +20,7 @@ class ReactionObserver
      */
     public function updated(Reaction $reaction): void
     {
-        Cache::tags(['tweet','followingTweets',  'tweetByUserName'])->flush();
+        CacheControl::forgetCache(['tweet','followingTweets',  'tweetByUserName']);
     }
 
     /**
@@ -28,7 +28,7 @@ class ReactionObserver
      */
     public function deleted(Reaction $reaction): void
     {
-        Cache::tags(['tweet','followingTweets',  'tweetByUserName'])->flush();
+        CacheControl::forgetCache(['tweet','followingTweets',  'tweetByUserName']);
     }
 
     /**
@@ -36,7 +36,7 @@ class ReactionObserver
      */
     public function restored(Reaction $reaction): void
     {
-        Cache::tags(['tweet','followingTweets',  'tweetByUserName'])->flush();
+        CacheControl::forgetCache(['tweet','followingTweets',  'tweetByUserName']);
     }
 
     /**
@@ -44,6 +44,6 @@ class ReactionObserver
      */
     public function forceDeleted(Reaction $reaction): void
     {
-        Cache::tags(['tweet','followingTweets',  'tweetByUserName'])->flush();
+        CacheControl::forgetCache(['tweet','followingTweets',  'tweetByUserName']);
     }
 }
