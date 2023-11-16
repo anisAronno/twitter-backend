@@ -8,9 +8,12 @@ enum React: string
 {
     use EnumToArray;
 
-    case LIKE = 'Like';
-    case LOVE = 'Love';
-    case SAD = 'Sad';
-    case CARE = 'Care';
-    case ANGRY = 'Angry';
+    case LIKE = '&#128077;';
+    case LOVE = '&#128525;';
+    case HAHA = '&#128513;';
+    case SAD = '&#128546;';
+    case CARE = '&#129392;';
+    case ANGRY = '&#128545;';
+
+    
 }
