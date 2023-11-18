@@ -35,7 +35,7 @@ This repository contains the backend codebase for the Twitter Clone project. It'
 5. Set up your environment variables, including the `FRONTEND_URL`:
 
    ```
-   FRONTEND_URL=http://localhost:9999
+   FRONTEND_URL=http://localhost:3139
    ```
 
 6. Generate your application key:
