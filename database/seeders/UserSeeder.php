@@ -28,7 +28,7 @@ class UserSeeder extends Seeder
                 'followers',
             )
             ->has(
-                Follower::factory()->count(3),
+                Follower::factory()->count(2),
                 'following',
             )
             ->create();
@@ -36,7 +36,7 @@ class UserSeeder extends Seeder
         $faker = Faker::create();
 
         User::all()->each(function ($user) use ($faker) {
-            Tweet::factory()->count(10)
+            Tweet::factory()->count(5)
                 ->create([
                     'user_id' => $user->id,
                     'content' => $faker->paragraph(),

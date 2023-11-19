@@ -17,6 +17,15 @@ class TweetResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $reactionArr = React::values();
+
+        $reactions = collect($reactionArr)->map(function ($emoji) {
+            return [
+                'emoji' => $emoji,
+                'name' => React::getEmojiName($emoji),
+            ];
+        })->all();
+        
         return [
             "id" => $this->id,
             "content" => $this->content,
@@ -24,7 +33,7 @@ class TweetResource extends JsonResource
             "total_reactions" => $this->whenNotNull($this->total_reactions),
             "user_reactions" => $this->whenNotNull($this->user_reactions),
             "reaction_count" => $this->whenNotNull($this->reaction_count),
-            "reaction_arr" => React::values(),
+            "reaction_arr" => $reactions,
             'user' => new UserResource($this->whenLoaded('user')),
         ];
     }
