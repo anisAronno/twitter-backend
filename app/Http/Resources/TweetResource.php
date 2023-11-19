@@ -25,10 +25,11 @@ class TweetResource extends JsonResource
                 'name' => React::getEmojiName($emoji),
             ];
         })->all();
-        
+
         return [
             "id" => $this->id,
             "content" => $this->content,
+            "slug" => $this->slug,
             'created_at' => Carbon::parse($this->created_at)->diffForHumans(),
             "total_reactions" => $this->whenNotNull($this->total_reactions),
             "user_reactions" => $this->whenNotNull($this->user_reactions),

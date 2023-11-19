@@ -7,6 +7,50 @@
 	},
 	"item": [
 		{
+			"name": "Production",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"anisaronno@gmail.com\",\n    \"password\": \"password\",\n    \"remember_me\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.asulsis.com/api/login",
+							"protocol": "https",
+							"host": [
+								"api",
+								"asulsis",
+								"com"
+							],
+							"path": [
+								"api",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Register",
 			"request": {
 				"auth": {
@@ -57,7 +101,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"id\": 1,\n    \"name\" : \"Anichur Rahaman\",\n    \"email\": \"anis9046922@gmail.com\",\n    \"username\" : \"anisaronno2\",\n    \"password\": \"password\",\n    \"password_confirmation\" : \"password\"\n}",
+					"raw": "{\n    \"id\": 1,\n    \"name\" : \"Anichur Rahaman\",\n    \"email\": \"anisaronno@gmail.com\",\n    \"username\" : \"anisaronno\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -65,7 +109,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://twitter.test/api/profile-update/1",
+					"raw": "http://twitter.test/api/profile-update/anisaronno",
 					"protocol": "http",
 					"host": [
 						"twitter",
@@ -74,7 +118,7 @@
 					"path": [
 						"api",
 						"profile-update",
-						"1"
+						"anisaronno"
 					]
 				}
 			},
@@ -101,7 +145,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://twitter.test/api/password-update/1",
+					"raw": "http://twitter.test/api/password-update/anisaronno",
 					"protocol": "http",
 					"host": [
 						"twitter",
@@ -110,7 +154,7 @@
 					"path": [
 						"api",
 						"password-update",
-						"1"
+						"anisaronno"
 					]
 				}
 			},
@@ -132,7 +176,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"email\": \"anisaronno@gmail.com\",\n    \"password\": \"password\"\n}",
+					"raw": "{\n    \"email\": \"anisaronno@gmail.com\",\n    \"password\": \"password\",\n    \"remember_me\": true\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -299,7 +343,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://twitter.test/api/user-profile/6124",
+					"raw": "http://twitter.test/api/user-profile/anisaronno",
 					"protocol": "http",
 					"host": [
 						"twitter",
@@ -308,7 +352,7 @@
 					"path": [
 						"api",
 						"user-profile",
-						"6124"
+						"anisaronno"
 					]
 				}
 			},
@@ -338,7 +382,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://twitter.test/api/tweet/1",
+					"raw": "http://twitter.test/api/tweet/ab-modi-non-est-ipsam-eum-ducimus-aut-dolores-rep-2",
 					"protocol": "http",
 					"host": [
 						"twitter",
@@ -347,7 +391,7 @@
 					"path": [
 						"api",
 						"tweet",
-						"1"
+						"ab-modi-non-est-ipsam-eum-ducimus-aut-dolores-rep-2"
 					]
 				}
 			},
@@ -377,7 +421,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://twitter.test/api/tweets?page=10",
+					"raw": "http://twitter.test/api/tweets?username=tgrady",
 					"protocol": "http",
 					"host": [
 						"twitter",
@@ -390,12 +434,7 @@
 					"query": [
 						{
 							"key": "username",
-							"value": "elenora24",
-							"disabled": true
-						},
-						{
-							"key": "page",
-							"value": "10"
+							"value": "tgrady"
 						}
 					]
 				}
@@ -507,7 +546,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://twitter.test/api/tweet/212",
+					"raw": "http://twitter.test/api/tweet/ab-modi-non-est-ipsam-eum-ducimus-aut-dolores-rep-2",
 					"protocol": "http",
 					"host": [
 						"twitter",
@@ -516,7 +555,7 @@
 					"path": [
 						"api",
 						"tweet",
-						"212"
+						"ab-modi-non-est-ipsam-eum-ducimus-aut-dolores-rep-2"
 					]
 				}
 			},
@@ -543,7 +582,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://twitter.test/api/tweet/3",
+					"raw": "http://twitter.test/api/tweet/voluptates-natus-et-magni-numquam-doloribus-qui-su",
 					"protocol": "http",
 					"host": [
 						"twitter",
@@ -552,7 +591,7 @@
 					"path": [
 						"api",
 						"tweet",
-						"3"
+						"voluptates-natus-et-magni-numquam-doloribus-qui-su"
 					]
 				}
 			},
@@ -741,7 +780,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vdHdpdHRlci50ZXN0L2FwaS9sb2dpbiIsImlhdCI6MTcwMDA1ODU4OSwiZXhwIjoxNzAwMDYyMTg5LCJuYmYiOjE3MDAwNTg1ODksImp0aSI6IldLbzZ2T1RkeUpDRU9yc1AiLCJzdWIiOiIxIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.UL3Qoc3Sccg3N8M_7_W3D2L95MThtkEMvL2OcBcVZVA",
+				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vdHdpdHRlci50ZXN0L2FwaS9sb2dpbiIsImlhdCI6MTcwMDQxNjg4OCwiZXhwIjoxNzAwNDIwNDg4LCJuYmYiOjE3MDA0MTY4ODgsImp0aSI6Ik5LTWdaWXdUZXZ6U1lWTnciLCJzdWIiOiIxIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.-6dFLIeMTohsdVHOmk64zIyYd4ycT3qQJJIcfk2Bi7s",
 				"type": "string"
 			}
 		]

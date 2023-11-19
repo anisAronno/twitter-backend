@@ -12,9 +12,9 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('logout', 'logout')->middleware(['auth:api']);
     Route::post('refresh', 'refresh')->middleware(['auth:api']);
     Route::get('profile', 'profile')->middleware(['auth:api']);
-    Route::get('user-profile/{user}', 'userProfile')->middleware(['auth:api'])->name('userProfile');
-    Route::post('profile-update/{user}', 'profileUpdate')->middleware(['auth:api']);
-    Route::post('password-update/{user}', 'passwordUpdate')->middleware(['auth:api']);
+    Route::get('user-profile/{user:username}', 'userProfile')->middleware(['auth:api'])->name('userProfile');
+    Route::post('profile-update/{user:username}', 'profileUpdate')->middleware(['auth:api']);
+    Route::post('password-update/{user:username}', 'passwordUpdate')->middleware(['auth:api']);
     Route::post('avatar-upload', 'userAvatarUpdate')->middleware(['auth:api']);
     Route::post('password-recover', 'passwordRecover')->name('password.recover')->middleware('guest');
     Route::post('password-reset', 'passwordReset')->name('password.reset')->middleware('guest');
@@ -28,10 +28,10 @@ Route::controller(HomeController::class)->middleware(['auth:api'])->group(functi
 
 Route::controller(TweetController::class)->middleware(['auth:api'])->group(function () {
     Route::get('tweet', 'index');
-    Route::get('tweet/{tweet}', 'show');
+    Route::get('tweet/{tweet:slug}', 'show');
     Route::post('tweet', 'store');
-    Route::put('tweet/{tweet}', 'update');
-    Route::delete('tweet/{tweet}', 'destroy');
+    Route::put('tweet/{tweet:slug}', 'update');
+    Route::delete('tweet/{tweet:slug}', 'destroy');
 });
 
 Route::controller(FollowerController::class)->middleware(['auth:api'])->group(function () {
