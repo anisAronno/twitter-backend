@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This repository contains the backend codebase for the Twitter Clone project. It's developed using Laravel, providing API functionalities to the Twitter Clone frontend.
+This repository contains the backend codebase for the Twitter Clone project. It's developed using Laravel, providing API functionalities to the Twitter [Clone frontend](https://github.com/anisAronno/twitter-clone-frontend).
 
 ## Getting Started
 
